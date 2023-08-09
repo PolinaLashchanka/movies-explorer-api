@@ -1,5 +1,4 @@
 const express = require('express');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const mongoose = require('mongoose');
 
 const app = express();
