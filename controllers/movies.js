@@ -1,5 +1,7 @@
 const Movie = require('../models/movie');
 
+const { BASE_URL } = require('../utils/constants');
+
 const getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
@@ -14,24 +16,27 @@ const createMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
+    trailerLink,
     nameRU,
     nameEN,
-    thumbnail,
-    movieId,
+    id,
   } = req.body;
+
+  const imageUrl = `${BASE_URL}${image.url}`;
+  const thumbnail = `${BASE_URL}${image.formats.thumbnail.url}`;
+
   Movie.create({
     country,
     director,
     duration,
     year,
     description,
-    image,
-    trailer,
+    image: imageUrl,
+    trailerLink,
     nameRU,
     nameEN,
     thumbnail,
-    movieId,
+    movieId: id,
     owner: req.user._id,
   })
     .then((movie) => res.status(201).send(movie))
