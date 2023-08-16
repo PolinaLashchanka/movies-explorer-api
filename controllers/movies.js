@@ -44,8 +44,19 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  Movie.findByIdAndRemove(req.params.movieId)
-    .then((movie) => res.send(movie))
+  Movie.findById(req.params.movieId)
+    .orFail(() => new Error('Данные не найдены'))
+    .then((movie) => {
+      if (String(movie.owner) === req.user._id) {
+        Movie.findByIdAndRemove(req.params.movieId)
+          .then((usersMovie) => {
+            res.send({ data: usersMovie });
+          })
+          .catch(next);
+      } else {
+        throw new Error('Вы не можете удалить этот фильм');
+      }
+    })
     .catch(next);
 };
 

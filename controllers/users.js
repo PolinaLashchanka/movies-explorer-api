@@ -10,11 +10,7 @@ const createUser = (req, res, next) => {
     .then((hashPassword) => {
       User.create({ email, name, password: hashPassword })
         .then((user) => res.status(201).send({
-          data: {
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-          },
+          data: user.deletePassword(),
         }))
         .catch(next);
     })

@@ -24,12 +24,13 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// eslint-disable-next-line func-names
-userSchema.methods.deletePassword = function () {
-  const user = this.toObject();
-  delete user.password;
+userSchema.method({
+  deletePassword() {
+    const user = this.toObject();
+    delete user.password;
 
-  return user;
-};
+    return user;
+  },
+});
 
 module.exports = mongoose.model('user', userSchema);
