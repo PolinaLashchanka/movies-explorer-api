@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const createUser = (req, res, next) => {
   const { email, password, name } = req.body;
 
@@ -28,7 +30,7 @@ const login = (req, res, next) => {
         .compare(password, user.password)
         .then((isValid) => {
           if (isValid) {
-            const jwt = jsonWebToken.sign({ _id: user._id }, 'secret-key');
+            const jwt = jsonWebToken.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
             res.send({ ...user.deletePassword(), token: jwt });
           } else {
             throw new Error('Неверное имя пользователя или пароль');
