@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
+const { DuplicateKeyError, AccessError } = require('../middlewares/error');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -14,7 +15,13 @@ const createUser = (req, res, next) => {
         .then((user) => res.status(201).send({
           data: user.deletePassword(),
         }))
-        .catch(next);
+        .catch((err) => {
+          if (err.code === 11000) {
+            next(new DuplicateKeyError('Такой Email уже зарегистрирован'));
+          } else {
+            next(err);
+          }
+        });
     })
     .catch(next);
 };
@@ -24,7 +31,7 @@ const login = (req, res, next) => {
 
   User.findOne({ email })
     .select('+password')
-    .orFail(() => new Error('Неверное имя пользователя или пароль'))
+    .orFail(() => new AccessError('Неверное имя пользователя или пароль'))
     .then((user) => {
       bcrypt
         .compare(password, user.password)
@@ -33,7 +40,7 @@ const login = (req, res, next) => {
             const jwt = jsonWebToken.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
             res.send({ ...user.deletePassword(), token: jwt });
           } else {
-            throw new Error('Неверное имя пользователя или пароль');
+            throw new AccessError('Неверное имя пользователя или пароль');
           }
         })
         .catch(next);

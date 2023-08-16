@@ -1,3 +1,4 @@
+const { DataNotFound, ForbiddenError } = require('../middlewares/error');
 const Movie = require('../models/movie');
 
 const { BASE_URL } = require('../utils/constants');
@@ -45,7 +46,7 @@ const createMovie = (req, res, next) => {
 
 const deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
-    .orFail(() => new Error('Данные не найдены'))
+    .orFail(() => new DataNotFound())
     .then((movie) => {
       if (String(movie.owner) === req.user._id) {
         Movie.findByIdAndRemove(req.params.movieId)
@@ -54,7 +55,7 @@ const deleteMovie = (req, res, next) => {
           })
           .catch(next);
       } else {
-        throw new Error('Вы не можете удалить этот фильм');
+        throw new ForbiddenError();
       }
     })
     .catch(next);
