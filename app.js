@@ -1,8 +1,10 @@
 require('dotenv').config();
 const express = require('express');
+const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const router = require('./routes');
+const limiter = require('./middlewares/rateLimit');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { errorHandler, DataNotFound } = require('./middlewares/error');
 
@@ -11,6 +13,8 @@ const { NODE_ENV, DB_ADRESS } = process.env;
 const allowedCors = ['https://films-search.students.nomoreparties.co'];
 
 const app = express();
+
+app.use(helmet());
 
 mongoose.connect(NODE_ENV === 'production' ? DB_ADRESS : 'mongodb://127.0.0.1:27017/devfilmsdb', {
   useNewUrlParser: true,
@@ -40,6 +44,8 @@ app.use((req, res, next) => {
 });
 
 app.use(requestLogger);
+
+app.use(limiter);
 
 app.use(router);
 
