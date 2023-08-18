@@ -8,6 +8,8 @@ const { errorHandler, DataNotFound } = require('./middlewares/error');
 
 const { NODE_ENV, DB_ADRESS } = process.env;
 
+const allowedCors = ['https://films-search.students.nomoreparties.co'];
+
 const app = express();
 
 mongoose.connect(NODE_ENV === 'production' ? DB_ADRESS : 'mongodb://127.0.0.1:27017/devfilmsdb', {
@@ -15,6 +17,27 @@ mongoose.connect(NODE_ENV === 'production' ? DB_ADRESS : 'mongodb://127.0.0.1:27
 });
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  const { method } = req;
+  const { origin } = req.headers;
+
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+  const requestHeaders = req.headers['access-control-request-headers'];
+
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
+  if (method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+    res.end();
+    return;
+  }
+
+  next();
+});
 
 app.use(requestLogger);
 
