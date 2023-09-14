@@ -12,9 +12,10 @@ const createUser = (req, res, next) => {
     .hash(password, 10)
     .then((hashPassword) => {
       User.create({ email, name, password: hashPassword })
-        .then((user) => res.status(201).send({
-          data: user.deletePassword(),
-        }))
+        .then((user) => {
+          const jwt = jsonWebToken.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
+          res.send({ ...user.deletePassword(), token: jwt });
+        })
         .catch((err) => {
           if (err.code === 11000) {
             next(new DuplicateKeyError('Такой Email уже зарегистрирован'));
