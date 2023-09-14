@@ -10,7 +10,7 @@ const { errorHandler, DataNotFound } = require('./middlewares/error');
 
 const { NODE_ENV, DB_ADRESS } = process.env;
 
-const allowedCors = ['https://films-search.students.nomoreparties.co', 'http://localhost:3001'];
+const allowedCors = ['https://films-search.students.nomoreparties.co'];
 
 const app = express();
 
