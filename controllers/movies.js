@@ -1,7 +1,7 @@
-const { DataNotFound, ForbiddenError } = require("../middlewares/error");
-const Movie = require("../models/movie");
+const { DataNotFound } = require('../middlewares/error');
+const Movie = require('../models/movie');
 
-const { BASE_URL } = require("../utils/constants");
+const { BASE_URL } = require('../utils/constants');
 
 const getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
