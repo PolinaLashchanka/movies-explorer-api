@@ -1,4 +1,4 @@
-const { DataNotFound, ForbiddenError } = require('../middlewares/error');
+const { DataNotFound } = require('../middlewares/error');
 const Movie = require('../models/movie');
 
 const { BASE_URL } = require('../utils/constants');
@@ -45,18 +45,10 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  Movie.findOneAndDelete({ movieId: req.params.movieId, owner: req.user._id })
     .orFail(() => new DataNotFound())
     .then((movie) => {
-      if (String(movie.owner) === req.user._id) {
-        Movie.findByIdAndRemove(req.params.movieId)
-          .then((usersMovie) => {
-            res.send({ data: usersMovie });
-          })
-          .catch(next);
-      } else {
-        throw new ForbiddenError();
-      }
+      res.send(movie);
     })
     .catch(next);
 };
