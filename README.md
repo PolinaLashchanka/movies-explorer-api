@@ -1,7 +1,15 @@
-# movies-explorer-api
+# Проект: MOVIES_EXPLORER_API
+---
 
-## Ссылкa на проект
-
-IP-адрес 158.160.118.220
-
-Backend https://api.films-search.students.nomoreparties.co
+## Проект, созданный на курсе `Яндекс Практикум "ВЕб-разработчик с нуля"
+***
+### Целью данного проекта является реализация API для проекта [MOVIES_EXPLORER_FRONTEND](https://github.com/PolinaLashchanka/movies-explorer-frontend).
+***
+### В проекте реализованы методы для работы с профилем пользователя, поиском и фильтрацией фильмов и управлением списка "Избранных" фильмов.
+***
+### Технологии, используемые при создании сервиса - `Node.js, MongoDB, Express`
+***
+### Запуск проекта
+`npm run start` — запускает сервер   
+`npm run dev` — запускает сервер с hot-reload
+***
